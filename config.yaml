@@ -1,6 +1,6 @@
 cookie:
   expiry_days: 30
-  key: "some_signature_key"
+  key: "a4f8c72b8cfa9342e3f7d91e4a8e1a2b"
   name: "streamlit_cookie"
 credentials:
   usernames:
