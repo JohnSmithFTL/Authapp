@@ -1,12 +1,14 @@
+cookie:
+  expiry_days: 30
+  key: "some_signature_key"
+  name: "streamlit_cookie"
 credentials:
   usernames:
     jsmith:
-      email: jsmith@gmail.com
-      password: abc  # This will be hashed automatically
-    rbriggs:
-      email: rbriggs@gmail.com
-      password: def  # This will be hashed automatically
-cookie:
-  expiry_days: 30
-  key: some_signature_key  # Must be a string
-  name: some_cookie_name
+      email: "jsmith@example.com"
+      name: "John Smith"
+      password: "$2b$12$K9Ek0S/Jtl1xv6NdJruqSuF0GXYIUyKfZPs/FiNENGG9RuWC4C5dG"  # password123
+    mwilson:
+      email: "mwilson@example.com"
+      name: "Mary Wilson"
+      password: "$2b$12$vcNweoXmK/hSpTmGXVJrv.jQo9RyQqKZYJDePGv/Yu8.hm.JDj3li"  # wilson2024
