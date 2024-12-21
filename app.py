@@ -20,17 +20,18 @@ authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
     config['cookie']['key'],
-    config['cookie']['expiry_days']
+    config['cookie']['expiry_days'],
+    config['preauthorized']
 )
 
 # Create login widget
-name, authentication_status, username = authenticator.login('Login', 'main')
+name, authentication_status, username = authenticator.login()  # Removed deprecated parameters
 
 if authentication_status:
     # Show logout button in sidebar
     with st.sidebar:
         st.write(f'Welcome *{name}*')
-        authenticator.logout('Logout', 'main')
+        authenticator.logout('Logout')  # Removed deprecated parameter
         
         # Navigation
         st.sidebar.title('Navigation')
