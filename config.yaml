@@ -11,4 +11,7 @@ credentials:
     mwilson:
       email: "mwilson@example.com"
       name: "Mary Wilson"
-      password: "$2b$12$vcNweoXmK/hSpTmGXVJrv.jQo9RyQqKZYJDePGv/Yu8.hm.JDj3li"  # wilson2024
+      password: "$2b$12$vcNweoXmK/hSpTmGXVJrv.jQo9RyQDePGv/Yu8.hm.JDj3li"  # wilson2024
+preauthorized:
+  emails:
+    - "newuser@example.com"
