@@ -1,0 +1,9 @@
+credentials:
+  usernames:
+    admin:
+      email: admin@example.com
+      password: adminpass  # This will be hashed automatically
+cookie:
+  expiry_days: 30
+  key: some_signature_key  # Must be a string
+  name: some_cookie_name
