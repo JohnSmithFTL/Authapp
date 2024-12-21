@@ -1,8 +1,11 @@
 credentials:
   usernames:
-    admin:
-      email: admin@example.com
-      password: adminpass  # This will be hashed automatically
+    jsmith:
+      email: jsmith@gmail.com
+      password: abc  # This will be hashed automatically
+    rbriggs:
+      email: rbriggs@gmail.com
+      password: def  # This will be hashed automatically
 cookie:
   expiry_days: 30
   key: some_signature_key  # Must be a string
