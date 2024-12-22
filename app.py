@@ -35,7 +35,6 @@ expected_columns = ["username", "email", "name", "password"]
 if not all(col in df.columns for col in expected_columns):
     st.error(f"Expected columns {expected_columns} not found in the users file. Please check the column names.")
 else:
-    # Assuming the columns match
     credentials = {
         "usernames": {row["username"]: {"email": row["email"], "name": row["name"], "password": row["password"]}
                     for _, row in df.iterrows()}
@@ -50,7 +49,9 @@ else:
 # Login Page
 def login_page():
     st.title("Login Page")
-    name, authentication_status, username = authenticator.login("Login", "main")
+    
+    # Explicitly specify the location of the login button
+    name, authentication_status, username = authenticator.login("Login", location="main")
     
     if authentication_status:
         st.success(f"Welcome {name}!")
