@@ -1,7 +1,8 @@
 cookie:
   expiry_days: 30
-  key: "a4f8c72b8cfa9342e3f7d91e4a8e1a2b"
+  key: "ff911a7f16c0a1dd7cfcabbe958a98c8"  # Secure key provided
   name: "streamlit_cookie"
+
 credentials:
   usernames:
     jsmith:
@@ -12,6 +13,7 @@ credentials:
       email: "mwilson@example.com"
       name: "Mary Wilson"
       password: "$2b$12$vcNweoXmK/hSpTmGXVJrv.jQo9RyQDePGv/Yu8.hm.JDj3li"  # wilson2024
+
 preauthorized:
   emails:
     - "newuser@example.com"
