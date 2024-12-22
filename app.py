@@ -50,8 +50,8 @@ else:
 def login_page():
     st.title("Login Page")
     
-    # Get login result and specify the location as 'main'
-    login_result = authenticator.login("Login", location="main")  # Added location="main"
+    # Simplified login without location argument
+    login_result = authenticator.login("Login")  # Removed location="main"
     
     # Debugging: Print the entire login result to inspect its structure
     st.write("Login result:", login_result)
