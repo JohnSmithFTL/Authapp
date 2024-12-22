@@ -1,5 +1,0 @@
-# File: config.yaml
-cookie:
-  expiry_days: 30
-  key: "random_signature_key_123"
-  name: "streamlit_auth_cookie"
