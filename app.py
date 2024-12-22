@@ -1,138 +1,93 @@
-# File: app.py
+# app.py
 import streamlit as st
-import streamlit_authenticator as stauth
 import pandas as pd
-import bcrypt
-import yaml
-from yaml.loader import SafeLoader
+import hashlib
+from pathlib import Path
+import os
 
-# Load config.yaml
-with open("config.yaml") as file:
-    config = yaml.load(file, Loader=SafeLoader)
+# Initialize session state
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
 
-# Load users from Excel file
-USERS_FILE = "users.xlsx"
+def init_users_db():
+    if not os.path.exists('users.xlsx'):
+        df = pd.DataFrame(columns=['username', 'password'])
+        # Add admin credentials
+        admin_pass = hashlib.sha256('admin123'.encode()).hexdigest()
+        df.loc[0] = ['admin', admin_pass]
+        df.to_excel('users.xlsx', index=False)
+    return pd.read_excel('users.xlsx')
 
-def load_users():
-    try:
-        df = pd.read_excel(USERS_FILE)
-        # Remove leading/trailing spaces from column names
-        df.columns = df.columns.str.strip().str.lower()
-        return df
-    except FileNotFoundError:
-        # Create new DataFrame if file doesn't exist
-        df = pd.DataFrame(columns=['username', 'email', 'name', 'password'])
-        df.to_excel(USERS_FILE, index=False)
-        return df
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
-def save_user(username, email, name, password):
-    df = load_users()
-    # Check if username already exists
-    if username in df['username'].values:
-        raise ValueError("Username already exists")
+def authenticate(username, password):
+    users_df = pd.read_excel('users.xlsx')
+    hashed_password = hash_password(password)
+    user_exists = users_df[
+        (users_df['username'] == username) & 
+        (users_df['password'] == hashed_password)
+    ].shape[0] > 0
+    return user_exists
+
+def signup(username, password):
+    users_df = pd.read_excel('users.xlsx')
+    if username in users_df['username'].values:
+        return False, "Username already exists!"
     
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    new_user = pd.DataFrame({
-        'username': [username], 
-        'email': [email], 
-        'name': [name], 
-        'password': [hashed_password]
-    })
-    df = pd.concat([df, new_user], ignore_index=True)
-    df.to_excel(USERS_FILE, index=False)
+    hashed_password = hash_password(password)
+    new_user = pd.DataFrame({'username': [username], 'password': [hashed_password]})
+    users_df = pd.concat([users_df, new_user], ignore_index=True)
+    users_df.to_excel('users.xlsx', index=False)
+    return True, "Signup successful! Please login."
 
-def setup_authentication():
-    df = load_users()
-    credentials = {
-        "usernames": {
-            row["username"]: {
-                "email": row["email"],
-                "name": row["name"],
-                "password": row["password"]
-            }
-            for _, row in df.iterrows()
-        }
-    }
-    return stauth.Authenticate(
-        credentials,
-        config["cookie"]["name"],
-        config["cookie"]["key"],
-        config["cookie"]["expiry_days"]
-    )
-
-def login_page():
-    st.title("Login Page")
-    
-    authenticator = setup_authentication()
-    
-    name, authentication_status, username = authenticator.login("Login", "main")
-    
-    if authentication_status:
-        st.success(f"Welcome {name}!")
-        app_navigation(username, authenticator)
-    elif authentication_status is False:
-        st.error("Invalid username/password")
-    elif authentication_status is None:
-        st.warning("Please enter your username and password")
-        
-        # Add sign up option below login
-        if st.button("Don't have an account? Sign Up"):
-            st.session_state['page'] = 'signup'
-            sign_up_page()
-
-def app_navigation(username, authenticator):
-    with st.sidebar:
-        authenticator.logout("Logout", "main")
-        option = st.selectbox("Navigation", ["Home", "About", "Dashboard", "Sign Up"])
-    
-    if option == "Home":
-        import pages.home
-        pages.home.app(username)
-    elif option == "About":
-        import pages.about
-        pages.about.app(username)
-    elif option == "Dashboard":
-        import pages.dashboard
-        pages.dashboard.app(username)
-    elif option == "Sign Up":
-        sign_up_page()
-
-def sign_up_page():
-    st.title("Sign Up Page")
-    st.write("Register as a new user")
-    
-    with st.form("signup_form"):
-        username = st.text_input("Username")
-        email = st.text_input("Email")
-        name = st.text_input("Full Name")
-        password = st.text_input("Password", type="password")
-        confirm_password = st.text_input("Confirm Password", type="password")
-        
-        submit_button = st.form_submit_button("Sign Up")
-        
-        if submit_button:
-            if not username or not email or not name or not password:
-                st.error("Please fill all fields.")
-            elif password != confirm_password:
-                st.error("Passwords do not match.")
-            else:
-                try:
-                    save_user(username, email, name, password)
-                    st.success("User registered successfully! Please log in.")
-                    st.session_state['page'] = 'login'
-                except ValueError as e:
-                    st.error(str(e))
-                except Exception as e:
-                    st.error(f"Error saving user: {e}")
+def create_pages_folder():
+    Path("pages").mkdir(exist_ok=True)
 
 def main():
-    if 'page' not in st.session_state:
-        st.session_state['page'] = 'login'
+    st.title("Welcome to My App")
+    
+    # Initialize users database and pages folder
+    init_users_db()
+    create_pages_folder()
 
-    if st.session_state['page'] == 'login':
-        login_page()
-    elif st.session_state['page'] == 'signup':
-        sign_up_page()
+    if not st.session_state.authenticated:
+        tab1, tab2 = st.tabs(["Login", "Sign Up"])
+        
+        with tab1:
+            st.subheader("Login")
+            username = st.text_input("Username", key="login_username")
+            password = st.text_input("Password", type="password", key="login_password")
+            
+            if st.button("Login"):
+                if authenticate(username, password):
+                    st.session_state.authenticated = True
+                    st.success("Logged in successfully!")
+                    st.rerun()
+                else:
+                    st.error("Invalid username or password")
+        
+        with tab2:
+            st.subheader("Sign Up")
+            new_username = st.text_input("Username", key="signup_username")
+            new_password = st.text_input("Password", type="password", key="signup_password")
+            confirm_password = st.text_input("Confirm Password", type="password")
+            
+            if st.button("Sign Up"):
+                if new_password != confirm_password:
+                    st.error("Passwords don't match!")
+                else:
+                    success, message = signup(new_username, new_password)
+                    if success:
+                        st.success(message)
+                    else:
+                        st.error(message)
+    
+    else:
+        st.success("You are logged in!")
+        if st.button("Logout"):
+            st.session_state.authenticated = False
+            st.rerun()
 
 if __name__ == "__main__":
     main()
