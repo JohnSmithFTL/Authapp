@@ -1,3 +1,4 @@
+# File: app.py
 import streamlit as st
 import streamlit_authenticator as stauth
 import pandas as pd
@@ -56,8 +57,7 @@ def setup_authentication():
         credentials,
         config["cookie"]["name"],
         config["cookie"]["key"],
-        config["cookie"]["expiry_days"],
-        config.get("preauthorized", {"emails": []})  # Add preauthorized section
+        config["cookie"]["expiry_days"]
     )
 
 def login_page():
@@ -65,7 +65,6 @@ def login_page():
     
     authenticator = setup_authentication()
     
-    # Login with required location parameter
     name, authentication_status, username = authenticator.login("Login", "main")
     
     if authentication_status:
@@ -120,7 +119,6 @@ def sign_up_page():
                 try:
                     save_user(username, email, name, password)
                     st.success("User registered successfully! Please log in.")
-                    # Reset form
                     st.session_state['page'] = 'login'
                 except ValueError as e:
                     st.error(str(e))
