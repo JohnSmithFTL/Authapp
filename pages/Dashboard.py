@@ -1,9 +1,15 @@
 # pages/Dashboard.py
 import streamlit as st
-from utils import require_auth
 
-@require_auth()
+def check_authentication():
+    """Check if user is authenticated."""
+    if 'authenticated' not in st.session_state or not st.session_state.authenticated:
+        st.warning("Please login to access this page.")
+        st.stop()
+
 def main():
+    check_authentication()
+    
     # Page header
     st.title("Dashboard")
     st.write(f"Welcome {st.session_state.username}!")
@@ -39,10 +45,16 @@ if __name__ == "__main__":
 
 # pages/About.py
 import streamlit as st
-from utils import require_auth
 
-@require_auth()
+def check_authentication():
+    """Check if user is authenticated."""
+    if 'authenticated' not in st.session_state or not st.session_state.authenticated:
+        st.warning("Please login to access this page.")
+        st.stop()
+
 def main():
+    check_authentication()
+    
     # Page header
     st.title("About")
     st.write(f"Welcome {st.session_state.username}!")
