@@ -1,18 +1,14 @@
 cookie:
   expiry_days: 30
-  key: "ff911a7f16c0a1dd7cfcabbe958a98c8"  # Secure key provided
+  key: "ff911a7f16c0a1dd7cfcabbe958a98c8"
   name: "streamlit_cookie"
 
 credentials:
   usernames:
-    jsmith:
-      email: "jsmith@example.com"
-      name: "John Smith"
-      password: "$2b$12$K9Ek0S/Jtl1xv6NdJruqSuF0GXYIUyKfZPs/FiNENGG9RuWC4C5dG"  # password123
-    mwilson:
-      email: "mwilson@example.com"
-      name: "Mary Wilson"
-      password: "$2b$12$vcNweoXmK/hSpTmGXVJrv.jQo9RyQDePGv/Yu8.hm.JDj3li"  # wilson2024
+    admin:
+      email: "admin@example.com"
+      name: "Admin User"
+      password: "$2b$12$XU3NpPmL6NvktmN.xdP.w.l.8sM1YahW1PiIRfJbApZsTBw/nRI3W"  # admin123
 
 preauthorized:
   emails:
