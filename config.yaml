@@ -1,15 +1,5 @@
+# File: config.yaml
 cookie:
   expiry_days: 30
-  key: "ff911a7f16c0a1dd7cfcabbe958a98c8"
-  name: "streamlit_cookie"
-
-credentials:
-  usernames:
-    admin:
-      email: "admin@example.com"
-      name: "Admin User"
-      password: "$2b$12$XU3NpPmL6NvktmN.xdP.w.l.8sM1YahW1PiIRfJbApZsTBw/nRI3W"  # admin123
-
-preauthorized:
-  emails:
-    - "newuser@example.com"
+  key: "random_signature_key_123"
+  name: "streamlit_auth_cookie"
