@@ -18,7 +18,13 @@ def load_users():
     if users_file.exists():
         return pd.read_excel(users_file)
     else:
-        df = pd.DataFrame(columns=['user_id', 'username', 'password'])
+        # Create with admin user
+        df = pd.DataFrame({
+            'user_id': ['admin'],
+            'username': ['Administrator'],
+            'password': [make_hashed_password('admin123')],
+            'is_admin': [True]
+        })
         df.to_excel(users_file, index=False)
         return df
 
@@ -34,6 +40,8 @@ def init_session_state():
         st.session_state.username = None
     if 'user_id' not in st.session_state:
         st.session_state.user_id = None
+    if 'is_admin' not in st.session_state:
+        st.session_state.is_admin = False
 
 def main():
     init_session_state()
@@ -43,10 +51,15 @@ def main():
         with st.sidebar:
             st.write(f"User ID: {st.session_state.user_id}")
             st.write(f"Name: {st.session_state.username}")
+            if st.session_state.is_admin:
+                st.write("Role: Administrator")
+            else:
+                st.write("Role: User")
             if st.button("Logout"):
                 st.session_state.authenticated = False
                 st.session_state.username = None
                 st.session_state.user_id = None
+                st.session_state.is_admin = False
                 st.rerun()
     
     # Show login page or main content based on authentication status
@@ -69,6 +82,7 @@ def main():
                         st.session_state.authenticated = True
                         st.session_state.username = user.iloc[0]['username']
                         st.session_state.user_id = login_id
+                        st.session_state.is_admin = bool(user.iloc[0].get('is_admin', False))
                         st.success("Logged in successfully!")
                         st.rerun()
                     else:
@@ -112,7 +126,8 @@ def main():
                     new_user = pd.DataFrame({
                         'user_id': [new_user_id],
                         'username': [new_username],
-                        'password': [make_hashed_password(new_password)]
+                        'password': [make_hashed_password(new_password)],
+                        'is_admin': [False]  # New users are not admins by default
                     })
                     users_df = pd.concat([users_df, new_user], ignore_index=True)
                     save_users(users_df)
