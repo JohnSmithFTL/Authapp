@@ -1,11 +1,16 @@
+# File: create_users.py
 import pandas as pd
+import bcrypt
+
+def hash_password(password):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 # Create initial users DataFrame
 initial_users = pd.DataFrame({
     'username': ['admin'],
     'email': ['admin@example.com'],
     'name': ['Admin User'],
-    'password': ['$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewLxOxs2UfS3LCom']  # password: admin123
+    'password': [hash_password('admin123')]  # This will create a fresh hash
 })
 
 # Save to Excel
