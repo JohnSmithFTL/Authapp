@@ -50,16 +50,23 @@ else:
 def login_page():
     st.title("Login Page")
     
-    # Explicitly specify the location of the login button
-    name, authentication_status, username = authenticator.login("Login", location="main")
+    # Get login result
+    login_result = authenticator.login("Login", location="main")
     
-    if authentication_status:
-        st.success(f"Welcome {name}!")
-        app_navigation(username)
-    elif authentication_status is False:
-        st.error("Invalid username/password")
-    elif authentication_status is None:
-        st.warning("Please enter your username and password")
+    # Debugging: Print the entire login result to inspect its structure
+    st.write("Login result:", login_result)
+    
+    if login_result is not None:
+        name, authentication_status, username = login_result
+        if authentication_status:
+            st.success(f"Welcome {name}!")
+            app_navigation(username)
+        elif authentication_status is False:
+            st.error("Invalid username/password")
+        elif authentication_status is None:
+            st.warning("Please enter your username and password")
+    else:
+        st.error("Authentication result is None")
 
 # App Navigation
 def app_navigation(username):
