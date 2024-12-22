@@ -7,13 +7,16 @@ passwords = ["admin123"]
 names = ["Admin User"]
 emails = ["admin@example.com"]
 
+# Hash the passwords properly
+hashed_passwords = stauth.Hasher(passwords).generate()
+
 # Create the credentials dictionary
 credentials = {
     "usernames": {
         usernames[i]: {
             "email": emails[i],
             "name": names[i],
-            "password": stauth.Hasher(passwords).generate()[i]
+            "password": hashed_passwords[i]
         }
         for i in range(len(usernames))
     }
