@@ -13,8 +13,11 @@ with open("config.yaml") as file:
 USERS_FILE = "users.xlsx"
 def load_users():
     df = pd.read_excel(USERS_FILE)
-    # Debugging line to inspect the DataFrame structure
-    st.write(df.head())  # Print the first few rows of the DataFrame for inspection
+    # Remove leading/trailing spaces from column names
+    df.columns = df.columns.str.strip()
+    # Debugging line to inspect the DataFrame structure and column names
+    st.write("Loaded columns:", df.columns)  # Display column names
+    st.write(df.head())  # Display first few rows of the DataFrame
     return df
 
 def save_user(username, email, name, password):
@@ -31,18 +34,18 @@ df = load_users()
 expected_columns = ["username", "email", "name", "password"]
 if not all(col in df.columns for col in expected_columns):
     st.error(f"Expected columns {expected_columns} not found in the users file. Please check the column names.")
-
-# Assuming the columns match
-credentials = {
-    "usernames": {row["username"]: {"email": row["email"], "name": row["name"], "password": row["password"]}
-                  for _, row in df.iterrows()}
-}
-authenticator = stauth.Authenticate(
-    credentials,
-    config["cookie"]["name"],
-    config["cookie"]["key"],
-    config["cookie"]["expiry_days"],
-)
+else:
+    # Assuming the columns match
+    credentials = {
+        "usernames": {row["username"]: {"email": row["email"], "name": row["name"], "password": row["password"]}
+                    for _, row in df.iterrows()}
+    }
+    authenticator = stauth.Authenticate(
+        credentials,
+        config["cookie"]["name"],
+        config["cookie"]["key"],
+        config["cookie"]["expiry_days"],
+    )
 
 # Login Page
 def login_page():
