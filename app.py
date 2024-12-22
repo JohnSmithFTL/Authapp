@@ -50,21 +50,24 @@ else:
 def login_page():
     st.title("Login Page")
     
-    # Get login result
-    login_result = authenticator.login("Login", location="main")
+    # Get login result and add debugging
+    login_result = authenticator.login("Login")  # Removed location="main"
     
     # Debugging: Print the entire login result to inspect its structure
     st.write("Login result:", login_result)
     
     if login_result is not None:
-        name, authentication_status, username = login_result
-        if authentication_status:
-            st.success(f"Welcome {name}!")
-            app_navigation(username)
-        elif authentication_status is False:
-            st.error("Invalid username/password")
-        elif authentication_status is None:
-            st.warning("Please enter your username and password")
+        try:
+            name, authentication_status, username = login_result
+            if authentication_status:
+                st.success(f"Welcome {name}!")
+                app_navigation(username)
+            elif authentication_status is False:
+                st.error("Invalid username/password")
+            elif authentication_status is None:
+                st.warning("Please enter your username and password")
+        except Exception as e:
+            st.error(f"Error unpacking login result: {e}")
     else:
         st.error("Authentication result is None")
 
