@@ -12,7 +12,10 @@ with open("config.yaml") as file:
 # Load users from Excel file
 USERS_FILE = "users.xlsx"
 def load_users():
-    return pd.read_excel(USERS_FILE)
+    df = pd.read_excel(USERS_FILE)
+    # Debugging line to inspect the DataFrame structure
+    st.write(df.head())  # Print the first few rows of the DataFrame for inspection
+    return df
 
 def save_user(username, email, name, password):
     df = load_users()
@@ -23,6 +26,13 @@ def save_user(username, email, name, password):
 
 # Authentication Setup
 df = load_users()
+
+# Verify the column names in the loaded DataFrame
+expected_columns = ["username", "email", "name", "password"]
+if not all(col in df.columns for col in expected_columns):
+    st.error(f"Expected columns {expected_columns} not found in the users file. Please check the column names.")
+
+# Assuming the columns match
 credentials = {
     "usernames": {row["username"]: {"email": row["email"], "name": row["name"], "password": row["password"]}
                   for _, row in df.iterrows()}
